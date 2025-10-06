@@ -13,25 +13,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Clonar o repositório
       - uses: actions/checkout@v3
 
+      # Configurar Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      # Verifica se o package.json existe
-      - name: Check package.json exists
-        run: test -f backend/package.json
+      # Verificar backend package.json e package-lock.json
+      - name: Check backend package files
+        run: |
+          test -f backend/package.json || (echo "Missing backend/package.json" && exit 1)
+          test -f backend/package-lock.json || (echo "Missing backend/package-lock.json" && exit 1)
 
-      # Instalar dependências
-      - name: Install dependencies
+      # Verificar frontend package.json e package-lock.json
+      - name: Check frontend package files
+        run: |
+          test -f frontend/package.json || (echo "Missing frontend/package.json" && exit 1)
+          test -f frontend/package-lock.json || (echo "Missing frontend/package-lock.json" && exit 1)
+
+      # Instalar dependências backend
+      - name: Install backend dependencies
         run: npm ci
+        working-directory: backend
 
-      # Build do frontend/backend
-      - name: Build project
+      # Instalar dependências frontend
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      # Build backend
+      - name: Build backend
         run: npm run build --if-present
+        working-directory: backend
 
-      # Lint do código (opcional)
-      - name: Run linter
+      # Build frontend
+      - name: Build frontend
+        run: npm run build --if-present
+        working-directory: frontend
+
+      # Lint backend (opcional)
+      - name: Lint backend
         run: npm run lint --if-present
+        working-directory: backend
+
+      # Lint frontend (opcional)
+      - name: Lint frontend
+        run: npm run lint --if-present
+        working-directory: frontend
