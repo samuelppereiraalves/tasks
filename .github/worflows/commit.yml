@@ -1,0 +1,37 @@
+name: CI Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Verifica se o package.json existe
+      - name: Check package.json exists
+        run: test -f package.json
+
+      # Instalar dependências
+      - name: Install dependencies
+        run: npm ci
+
+      # Build do frontend/backend
+      - name: Build project
+        run: npm run build --if-present
+
+      # Lint do código (opcional)
+      - name: Run linter
+        run: npm run lint --if-present
