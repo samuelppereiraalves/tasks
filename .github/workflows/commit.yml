@@ -22,7 +22,7 @@ jobs:
 
       # Verifica se o package.json existe
       - name: Check package.json exists
-        run: test -f package.json
+        run: test -f backend/package.json
 
       # Instalar dependências
       - name: Install dependencies
